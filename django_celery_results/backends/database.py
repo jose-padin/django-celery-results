@@ -79,10 +79,6 @@ class DatabaseBackend(BaseDictBackend):
                 # task protocol 1
                 task_kwargs = getattr(request, 'kwargs', None)
 
-            # TODO: We assuming that task protocol 1 could be always in use. :/
-            extended_props.update(
-                extend_task_props_callback(getattr(request, 'kwargs', None)))
-
             # Encode input arguments
             if task_args is not None:
                 _, _, task_args = self.encode_content(task_args)
@@ -132,6 +128,9 @@ class DatabaseBackend(BaseDictBackend):
         task_props.update(
             self._get_extended_properties(request, traceback)
         )
+
+        task_props.update(
+            extend_task_props_callback(request, dict(task_props)))
 
         self.TaskModel._default_manager.store_result(**task_props)
         return result
