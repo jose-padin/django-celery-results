@@ -12,8 +12,8 @@ from django.db.utils import InterfaceError
 from kombu.exceptions import DecodeError
 
 from ..models import ChordCounter
-from ..models import GroupResult as GroupResultModel
-from ..models import TaskResult
+from ..models.helpers import taskresult_model, groupresult_model
+from ..settings import extend_task_props_callback
 
 EXCEPTIONS_TO_CATCH = (InterfaceError,)
 
@@ -29,8 +29,8 @@ logger = get_logger(__name__)
 class DatabaseBackend(BaseDictBackend):
     """The Django database backend, using models to store task state."""
 
-    TaskModel = TaskResult
-    GroupModel = GroupResultModel
+    TaskModel = taskresult_model()
+    GroupModel = groupresult_model()
     subpolling_interval = 0.5
 
     def exception_safe_to_retry(self, exc):
@@ -78,6 +78,10 @@ class DatabaseBackend(BaseDictBackend):
             else:
                 # task protocol 1
                 task_kwargs = getattr(request, 'kwargs', None)
+
+            # TODO: We assuming that task protocol 1 could be always in use. :/
+            extended_props.update(
+                extend_task_props_callback(getattr(request, 'kwargs', None)))
 
             # Encode input arguments
             if task_args is not None:
