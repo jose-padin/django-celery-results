@@ -129,6 +129,8 @@ class DatabaseBackend(BaseDictBackend):
             self._get_extended_properties(request, traceback)
         )
 
+        # TODO: Wrap this and make some sanity checks to complain the Mapping
+        # protocol.
         task_props.update(
             extend_task_props_callback(request, dict(task_props)))
 
