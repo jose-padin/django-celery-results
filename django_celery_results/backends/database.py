@@ -1,5 +1,6 @@
 import binascii
 import json
+from typing import Mapping
 
 from celery import maybe_signature
 from celery.backends.base import BaseDictBackend
@@ -13,7 +14,7 @@ from kombu.exceptions import DecodeError
 
 from ..models import ChordCounter
 from ..models.helpers import taskresult_model, groupresult_model
-from ..settings import extend_task_props_callback
+from ..settings import get_task_props_extension
 
 EXCEPTIONS_TO_CATCH = (InterfaceError,)
 
@@ -125,14 +126,8 @@ class DatabaseBackend(BaseDictBackend):
             'using': using,
         }
 
-        task_props.update(
-            self._get_extended_properties(request, traceback)
-        )
-
-        # TODO: Wrap this and make some sanity checks to complain the Mapping
-        # protocol.
-        task_props.update(
-            extend_task_props_callback(request, dict(task_props)))
+        task_props.update(self._get_extended_properties(request, traceback))
+        task_props.update(get_task_props_extension(request, dict(task_props)))
 
         self.TaskModel._default_manager.store_result(**task_props)
         return result
