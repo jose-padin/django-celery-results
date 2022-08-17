@@ -13,7 +13,7 @@ from django.db.utils import InterfaceError
 from kombu.exceptions import DecodeError
 
 from ..models import ChordCounter
-from ..models.helpers import taskresult_model, groupresult_model
+from ..models.helpers import groupresult_model, taskresult_model
 from ..settings import get_task_props_extension
 
 EXCEPTIONS_TO_CATCH = (InterfaceError,)
