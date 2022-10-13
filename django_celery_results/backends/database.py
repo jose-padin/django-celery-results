@@ -1,6 +1,5 @@
 import binascii
 import json
-from typing import Mapping
 
 from celery import maybe_signature
 from celery.backends.base import BaseDictBackend
