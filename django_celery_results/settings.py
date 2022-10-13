@@ -1,6 +1,7 @@
+from collections.abc import Mapping
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from collections.abc import Mapping
 
 
 def get_callback_function(settings_name, default=None):
@@ -28,8 +29,7 @@ def get_task_props_extension(request, task_props):
     task_props_extension = extend_task_props_callback(request, task_props) or {}
     if not isinstance(task_props_extension, Mapping):
         raise ImproperlyConfigured(
-            "CELERY_RESULTS_EXTEND_TASK_PROPS_CALLBACK must return a Mapping "
-            "instance."
+            "CELERY_RESULTS_EXTEND_TASK_PROPS_CALLBACK must return a Mapping."
         )
 
     return task_props_extension
