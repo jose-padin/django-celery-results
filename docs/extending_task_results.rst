@@ -1,7 +1,7 @@
 Extending Task Results
 ======================
 
-There are situations where you want to extend the Task Results with additional information that will make you able to retrieve information that was important at execution time of the task but not part of the task result itself. For example if you use :pypi:`django-celery-results` to track the task results from an tenant.
+There are situations where you want to extend the Task Results with additional information that will make you able to retrieve information that was important at execution time of the task but not part of the task result itself. For example if you use :pypi:`django-celery-results` to track the task results from a tenant.
 
 To extend the Task Results model follow the next steps:
 
@@ -20,7 +20,7 @@ To extend the Task Results model follow the next steps:
         
         CELERY_RESULTS_TASKRESULT_MODEL = 'myapp.TaskResult'
 
-#. Write a function in your Django project's :file:`settings.py` that will consume a `request` and `task_properties` as positional arguments and will return a dictionary with the additional information that you want to store in the your custom `TaskResult` model. The keys of this dictionary will be the fields of the custom model and the values the data you can retrieve from the `request` and/or `task_properties`.
+#. Write a function that will consume a `request` and `task_properties` as positional arguments and will return a dictionary with the additional information that you want to store in your custom `TaskResult` model. The keys of this dictionary will be the fields of the custom model and the values the data you can retrieve from the `request` and/or `task_properties`.
 
     .. code-block:: python
 
@@ -30,7 +30,7 @@ To extend the Task Results model follow the next steps:
 
             return {"tenant_id": task_kwargs.get("tenant_id", None)}
 
-#. To let :pypi:`django-celery-results` call this function internally you've to set the `CELERY_RESULTS_EXTEND_TASK_PROPS_CALLBACK` constant in your Django project's :file:`settings.py` with the function that you've just created.
+#. To let :pypi:`django-celery-results` call this function, you'll have to set the `CELERY_RESULTS_EXTEND_TASK_PROPS_CALLBACK` constant in your Django project's :file:`settings.py`.
 
         .. code-block:: python
         
