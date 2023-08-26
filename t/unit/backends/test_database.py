@@ -517,6 +517,37 @@ class test_DatabaseBackend:
         assert json.loads(tr.task_args) == ['a', 1, True]
         assert json.loads(tr.task_kwargs) == {'c': 6, 'd': 'e', 'f': False}
 
+    def test_backend__task_result_meta_injection(self):
+        self.app.conf.result_serializer = 'json'
+        self.app.conf.accept_content = {'pickle', 'json'}
+        self.b = DatabaseBackend(app=self.app)
+
+        tid2 = uuid()
+        request = self._create_request(
+            task_id=tid2,
+            name='my_task',
+            args=[],
+            kwargs={},
+            task_protocol=1,
+        )
+        result = None
+
+        # inject request meta arbitrary data
+        request.meta = {
+            'key': 'value'
+        }
+
+        self.b.mark_as_done(tid2, result, request=request)
+        mindb = self.b.get_task_meta(tid2)
+
+        # check task meta
+        assert mindb.get('result') is None
+        assert mindb.get('task_name') == 'my_task'
+
+        # check task_result object
+        tr = TaskResult.objects.get(task_id=tid2)
+        assert json.loads(tr.meta) == {'key': 'value', 'children': []}
+
     def xxx_backend(self):
         tid = uuid()
 
@@ -740,8 +771,8 @@ class test_DatabaseBackend:
         request.chord.delay.assert_called_once()
 
     def test_on_chord_part_return_counter_not_found(self):
-        """
-        Test if the chord does't raise an error if the ChordCounter is not found
+        """Test if the chord does not raise an error if the ChordCounter is
+        not found
 
         Basically this covers the case where a chord was created with a version
         <2.0.0 and the update was done before the chord was finished
@@ -796,9 +827,8 @@ class test_DatabaseBackend:
         assert TaskResult.objects.get(task_id=cid).status == states.FAILURE
 
     def test_on_chord_part_return_failure(self):
-        """
-        Test if a failure in one of the chord header tasks is properly handled
-        and the callback was not triggered
+        """Test if a failure in one of the chord header tasks is properly
+        handled and the callback was not triggered
         """
         gid = uuid()
         tid1 = uuid()

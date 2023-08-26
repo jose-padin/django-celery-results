@@ -38,11 +38,14 @@ classes = """
     Programming Language :: Python :: 3.8
     Programming Language :: Python :: 3.9
     Programming Language :: Python :: 3.10
+    Programming Language :: Python :: 3.11
     Programming Language :: Python :: Implementation :: CPython
     Programming Language :: Python :: Implementation :: PyPy
     Framework :: Django
     Framework :: Django :: 3.2
     Framework :: Django :: 4.0
+    Framework :: Django :: 4.1
+    Framework :: Django :: 4.2
     Operating System :: OS Independent
     Topic :: Communications
     Topic :: System :: Distributed Computing
@@ -110,7 +113,7 @@ def reqs(*f):
 if os.path.exists('README.rst'):
     long_description = codecs.open('README.rst', 'r', 'utf-8').read()
 else:
-    long_description = f'See http://pypi.python.org/pypi/{NAME}'
+    long_description = f'See https://pypi.python.org/pypi/{NAME}'
 
 # -*- %%% -*-
 
@@ -138,6 +141,16 @@ setuptools.setup(
     author=meta['author'],
     author_email=meta['contact'],
     url=meta['homepage'],
+    project_urls={
+        'Documentation': (
+            'https://django-celery-results.readthedocs.io/en/latest/'
+        ),
+        'Changelog': (
+            'https://django-celery-results.readthedocs.io/en/latest/'
+            'changelog.html'
+        ),
+        'Repository': 'https://github.com/celery/django-celery-results',
+    },
     platforms=['any'],
     license='BSD',
     classifiers=classifiers,
